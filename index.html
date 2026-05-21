@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syncaf ERP — AI-Powered Operations Platform</title>
+  <meta name="description" content="The only ERP with an AI assistant built for operations — not generic chat. Buy, move, sell, and close the books in one connected workspace." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #ffffff;
+      --bg-2:      #f8fafc;
+      --bg-card:   #ffffff;
+      --bg-card-2: #f8fafc;
+      --border:    #e2e8f0;
+      --border-2:  #cbd5e1;
+      --text:      #0f172a;
+      --text-2:    #475569;
+      --text-3:    #94a3b8;
+      --accent:    #4f46e5;
+      --accent-2:  #4338ca;
+      --teal:      #0d9488;
+      --teal-2:    #0f766e;
+      --violet:    #7c3aed;
+      --rose:      #e11d48;
+      --amber:     #d97706;
+      --emerald:   #059669;
+      --grad-1: linear-gradient(135deg, #4f46e5, #7c3aed, #0d9488);
+      --grad-2: linear-gradient(135deg, #eef2ff, #f5f3ff);
+      --r:     12px;
+      --r-lg:  20px;
+      --r-xl:  28px;
+      --shadow-sm: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+      --shadow:    0 4px 6px rgba(15,23,42,0.05), 0 10px 24px rgba(15,23,42,0.07);
+      --shadow-lg: 0 8px 16px rgba(15,23,42,0.06), 0 24px 48px rgba(15,23,42,0.1);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── Noise texture overlay ───────────────────────────────────── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.018;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Typography ─────────────────────────────────────────────── */
+    .mono { font-family: "JetBrains Mono", monospace; }
+
+    /* ─── Shared helpers ─────────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 2.5rem);
+      position: relative;
+      z-index: 2;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid;
+    }
+
+    .badge-ai {
+      color: var(--accent);
+      background: #eef2ff;
+      border-color: #c7d2fe;
+    }
+
+    .badge-teal {
+      color: var(--teal-2);
+      background: #f0fdfa;
+      border-color: #99f6e4;
+    }
+
+    .badge-violet {
+      color: var(--violet);
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 0.9rem;
+    }
+
+    .section-label::before {
+      content: "";
+      display: block;
+      width: 18px;
+      height: 1px;
+      background: var(--border-2);
+    }
+
+    .section-heading {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    .section-sub {
+      font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 38rem;
+      margin-top: 0.75rem;
+    }
+
+    .grad-text {
+      background: var(--grad-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    section { position: relative; overflow: hidden; }
+
+    /* ─── Glow effects ───────────────────────────────────────────── */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+    }
+    .glow-1 { width: 600px; height: 600px; background: rgba(79,70,229,0.07); top: -200px; right: -100px; }
+    .glow-2 { width: 400px; height: 400px; background: rgba(13,148,136,0.07); bottom: 0; left: -100px; }
+    .glow-3 { width: 500px; height: 500px; background: rgba(124,58,237,0.06); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* ─── Reveal animation ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 clamp(1rem, 4vw, 2.5rem);
+      background: rgba(255,255,255,0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled {
+      box-shadow: 0 1px 16px rgba(15,23,42,0.08);
+    }
+
+    .nav-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .nav-logo-mark {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--grad-1);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(79,70,229,0.28);
+    }
+
+    .logo-name {
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+
+    .logo-tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.6em;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      margin-left: 0.3rem;
+      vertical-align: middle;
+      position: relative;
+      top: -0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-2);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--bg-2);
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.55rem 1.2rem;
+      border-radius: 9px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-2);
+      border: 1px solid var(--border-2);
+    }
+    .btn-ghost:hover {
+      color: var(--text);
+      background: var(--bg-2);
+      border-color: var(--border-2);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 1px 2px rgba(79,70,229,0.2);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover {
+      background: #4338ca;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-lg {
+      font-size: 1rem;
+      padding: 0.85rem 2rem;
+      border-radius: 12px;
+    }
+
+    .btn-gradient {
+      background: var(--grad-1);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+    }
+    .btn-gradient:hover {
+      opacity: 0.92;
+      box-shadow: 0 6px 20px rgba(79,70,229,0.35);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      padding-bottom: 5rem;
+      background:
+        radial-gradient(ellipse 70% 55% at 75% 5%, rgba(79,70,229,0.08), transparent 55%),
+        radial-gradient(ellipse 50% 45% at 5% 95%, rgba(13,148,136,0.07), transparent 50%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(124,58,237,0.04), transparent 60%),
+        var(--bg);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal-2);
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: clamp(1.85rem, 3.8vw, 2.9rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-desc {
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 32rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: var(--grad-1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .stat-lbl { font-size: 0.75rem; color: var(--text-3); margin-top: 0.1rem; }
+
+    /* Hero right — UI preview card */
+    .hero-visual { position: relative; }
+
+    .ui-preview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .ui-card-topbar {
+      background: var(--bg-card-2);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ui-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .ui-dot-r { background: #f43f5e; }
+    .ui-dot-y { background: #f59e0b; }
+    .ui-dot-g { background: #10b981; }
+
+    .ui-topbar-title {
+      flex: 1;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    .ui-card-body { padding: 1.15rem; }
+
+    /* KPI strip */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 0.55rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .kpi-tile {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.7rem;
+    }
+
+    .kpi-tile .kt-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+    .kpi-tile .kt-lbl {
+      font-size: 0.58rem;
+      color: var(--text-3);
+      margin-top: 0.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .kpi-tile .kt-change {
+      font-size: 0.6rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+    .up { color: #059669; }
+    .down { color: #dc2626; }
+
+    /* Mini bar chart */
+    .mini-chart {
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem;
+      margin-bottom: 0.7rem;
+    }
+    .mini-chart-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-3);
+      margin-bottom: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 48px;
+    }
+    .bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      background: rgba(79,70,229,0.25);
+      transition: height 0.4s ease;
+    }
+    .bar:nth-child(even) { background: rgba(13,148,136,0.25); }
+    .bar.active { background: var(--accent); }
+
+    /* AI chat bubble in card */
+    .ai-bubble {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 0.7rem 0.85rem;
+      display: flex;
+      gap: 0.55rem;
+      align-items: flex-start;
+    }
+    .ai-bubble-icon {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: var(--grad-1);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .ai-bubble-text { font-size: 0.72rem; color: var(--text-2); line-height: 1.45; }
+    .ai-bubble-text strong { color: var(--accent-2); }
+
+    /* floating label on hero visual */
+    .hero-float-badge {
+      position: absolute;
+      bottom: -14px;
+      left: -20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: var(--shadow);
+    }
+
+    .pulse-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #059669;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; }
+    }
+
+    /* ─── TRUST BAR ──────────────────────────────────────────────── */
+    #trust {
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-2);
+    }
+
+    .trust-inner {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .trust-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-3);
+      white-space: nowrap;
+    }
+
+    .trust-modules {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .trust-chip {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+
+    /* ─── PLATFORM PILLARS ───────────────────────────────────────── */
+    #platform {
+      padding: 6rem 0;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1.25rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 820px) {
+      .pillars-grid { grid-template-columns: 1fr; }
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .pillar-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: inherit;
+    }
+
+    .pillar-card:hover { transform: translateY(-4px); border-color: var(--border-2); box-shadow: var(--shadow); }
+    .pillar-card:hover::before { opacity: 1; }
+
+    .pillar-card.c-ai::before { background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(79,70,229,0.05), transparent); }
+    .pillar-card.c-teal::before { background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(13,148,136,0.05), transparent); }
+    .pillar-card.c-violet::before { background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,58,237,0.05), transparent); }
+
+    .pillar-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      margin-bottom: 1.25rem;
+      position: relative; z-index: 1;
+    }
+    .pi-ai { background: #eef2ff; color: var(--accent); }
+    .pi-teal { background: #f0fdfa; color: var(--teal); }
+    .pi-violet { background: #f5f3ff; color: var(--violet); }
+
+    .pillar-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.55rem;
+      position: relative; z-index: 1;
+    }
+    .pillar-desc {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.6;
+      position: relative; z-index: 1;
+    }
+    .pillar-features {
+      margin-top: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative; z-index: 1;
+    }
+    .pf-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--text-2);
+    }
+    .pf-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .c-ai .pf-dot { background: var(--accent); }
+    .c-teal .pf-dot { background: var(--teal); }
+    .c-violet .pf-dot { background: var(--violet); }
+
+    /* ─── AI SECTION ─────────────────────────────────────────────── */
+    #ai {
+      padding: 6rem 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(79,70,229,0.04), transparent 65%),
+        var(--bg-2);
+    }
+
+    .ai-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 880px) {
+      .ai-layout { grid-template-columns: 1fr; }
+    }
+
+    .ai-caps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    @media (max-width: 500px) {
+      .ai-caps-grid { grid-template-columns: 1fr; }
+    }
+
+    .ai-cap-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .ai-cap-card:hover { border-color: #c7d2fe; transform: translateY(-2px); box-shadow: var(--shadow); }
+
+    .ai-cap-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: grid; place-items: center;
+      margin-bottom: 0.75rem;
+      background: #eef2ff;
+      color: var(--accent);
+    }
+    .ai-cap-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text); }
+    .ai-cap-desc { font-size: 0.78rem; color: var(--text-2); line-height: 1.5; }
+
+    /* Chat window mock */
+    .chat-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chat-topbar {
+      background: var(--bg-card-2);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .chat-avatar {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: var(--grad-1);
+      display: grid; place-items: center;
+      font-size: 0.68rem; font-weight: 800; color: #fff;
+    }
+
+    .chat-info .ci-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .chat-info .ci-status { font-size: 0.65rem; color: var(--teal); }
+
+    .chat-topbar-dots {
+      margin-left: auto;
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .chat-body { padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; background: var(--bg-card); }
+
+    .chat-msg {
+      max-width: 88%;
+      padding: 0.7rem 0.9rem;
+      border-radius: 14px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: var(--text);
+    }
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .chat-msg.bot .mini-detail {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--text-2);
+    }
+
+    .chat-action-row {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .chat-action-btn {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: var(--teal-2);
+      cursor: default;
+    }
+
+    .chat-input-bar {
+      border-top: 1px solid var(--border);
+      padding: 0.8rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-card-2);
+    }
+    .chat-input-mock {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.78rem;
+      color: var(--text-3);
+    }
+    .chat-send {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--accent);
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+
+    /* ─── MODULES ────────────────────────────────────────────────── */
+    #modules {
+      padding: 6rem 0;
+      background: var(--bg);
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 900px) { .modules-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .modules-grid { grid-template-columns: 1fr; } }
+
+    .mod-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .mod-card:hover {
+      border-color: var(--border-2);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+
+    .mod-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .mi-1  { background: #eef2ff; color: var(--accent); }
+    .mi-2  { background: #f0fdfa; color: var(--teal); }
+    .mi-3  { background: #f5f3ff; color: var(--violet); }
+    .mi-4  { background: #fffbeb; color: #b45309; }
+    .mi-5  { background: #f0fdf4; color: #15803d; }
+    .mi-6  { background: #fff1f2; color: #be123c; }
+    .mi-7  { background: #ecfeff; color: #0e7490; }
+    .mi-8  { background: #faf5ff; color: #6d28d9; }
+    .mi-9  { background: #eef2ff; color: var(--accent); }
+    .mi-10 { background: #fffbeb; color: #b45309; }
+    .mi-11 { background: #fff1f2; color: #be123c; }
+    .mi-12 { background: #f0fdfa; color: var(--teal); }
+
+    .mod-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .mod-sub { font-size: 0.72rem; color: var(--text-3); line-height: 1.4; }
+
+    /* ─── WORKFLOWS ──────────────────────────────────────────────── */
+    #workflows {
+      padding: 6rem 0;
+      background: var(--bg-2);
+    }
+
+    .workflow-tabs {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 2.5rem;
+      margin-bottom: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.3rem;
+      width: fit-content;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .wf-tab {
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.55rem 1.25rem;
+      border-radius: 9px;
+      cursor: pointer;
+      color: var(--text-2);
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+    }
+    .wf-tab.active {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .wf-panel { display: none; }
+    .wf-panel.active { display: block; }
+
+    .flow-steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .fs-item {
+      flex: 1;
+      min-width: 90px;
+      max-width: 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .fs-item::after {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: calc(50% + 18px);
+      right: calc(-50% + 18px);
+      height: 1px;
+      background: var(--border);
+    }
+    .fs-item:last-child::after { display: none; }
+
+    .fs-num {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 0.78rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 0.6rem;
+      border: 1.5px solid;
+      transition: transform 0.2s;
+    }
+    .fs-item:hover .fs-num { transform: scale(1.1); }
+
+    .fs-title { font-size: 0.78rem; font-weight: 700; text-align: center; color: var(--text); }
+    .fs-tag { font-size: 0.65rem; color: var(--text-3); text-align: center; margin-top: 0.2rem; }
+
+    /* color variants — lightened for light mode */
+    .fc-teal .fs-num    { background: #f0fdfa; color: var(--teal-2); border-color: #5eead4; }
+    .fc-indigo .fs-num  { background: #eef2ff; color: var(--accent); border-color: #a5b4fc; }
+    .fc-violet .fs-num  { background: #f5f3ff; color: var(--violet); border-color: #c4b5fd; }
+    .fc-emerald .fs-num { background: #f0fdf4; color: #15803d; border-color: #86efac; }
+    .fc-rose .fs-num    { background: #fff1f2; color: #be123c; border-color: #fda4af; }
+    .fc-amber .fs-num   { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+    .fc-cyan .fs-num    { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
+
+    .flow-desc {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem 1.4rem;
+      margin-top: 1.5rem;
+      font-size: 0.84rem;
+      color: var(--text-2);
+      line-height: 1.6;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ─── FINANCE STRIP ─────────────────────────────────────────── */
+    #finance {
+      padding: 6rem 0;
+      background: var(--bg);
+    }
+
+    .fin-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+
+    @media (max-width: 860px) { .fin-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .fin-grid { grid-template-columns: 1fr; } }
+
+    .fin-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .fin-card:hover { transform: translateY(-3px); border-color: var(--border-2); box-shadow: var(--shadow); }
+
+    .fin-icon {
+      width: 42px; height: 42px;
+      border-radius: 11px;
+      display: grid; place-items: center;
+      margin-bottom: 1rem;
+    }
+    .fin-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text); }
+    .fin-desc { font-size: 0.78rem; color: var(--text-2); line-height: 1.5; }
+
+    /* ─── DEMO STORY ─────────────────────────────────────────────── */
+    #demo {
+      padding: 6rem 0;
+      background: var(--bg-2);
+    }
+
+    .story-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.85rem;
+      margin-top: 2.5rem;
+    }
+
+    @media (max-width: 860px) { .story-steps { grid-template-columns: repeat(2,1fr) } }
+    @media (max-width: 480px) { .story-steps { grid-template-columns: 1fr; } }
+
+    .story-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem 1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .story-step::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--grad-1);
+      border-radius: 14px 14px 0 0;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .story-step:hover::after { opacity: 1; }
+    .story-step:hover { border-color: var(--border-2); box-shadow: var(--shadow); }
+
+    .ss-num {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .ss-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text); }
+    .ss-desc { font-size: 0.75rem; color: var(--text-2); line-height: 1.45; }
+
+    /* ─── CTA SECTION ────────────────────────────────────────────── */
+    #cta {
+      padding: 7rem 0;
+      text-align: center;
+      position: relative;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 50%, rgba(79,70,229,0.06), transparent 60%),
+        var(--bg);
+    }
+
+    .cta-wrap {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cta-wrap h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .cta-wrap p {
+      font-size: 1rem;
+      color: var(--text-2);
+      line-height: 1.65;
+      margin-bottom: 2rem;
+    }
+
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 0;
+      background: var(--bg-2);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo { display: flex; align-items: center; gap: 0.6rem; }
+    .footer-copy { font-size: 0.78rem; color: var(--text-3); }
+    .footer-links { display: flex; gap: 1.25rem; }
+    .footer-links a { font-size: 0.78rem; color: var(--text-3); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text-2); }
+
+    /* ─── SVG Icon inline helper ─────────────────────────────────── */
+    .ico {
+      width: 1.1em; height: 1.1em;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ─── Scrollbar ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-2); }
+    ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* ─── Mobile adjustments ─────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .hero-stats { gap: 1.25rem; }
+      .kpi-strip { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ──────────────────────────────────────────────────── -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-mark">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2" stroke-linecap="round">
+            <path d="M15 5Q7 5 7 9Q7 13 15 13Q15 17 7 17"/>
+            <circle cx="15" cy="5" r="1.5" fill="white" stroke="none"/>
+            <circle cx="7" cy="17" r="1.5" fill="white" stroke="none"/>
+          </svg>
+        </div>
+        <span class="logo-name">Syncaf<span class="logo-tag">ERP</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#platform">Platform</a></li>
+        <li><a href="#ai">AI Assistant</a></li>
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#workflows">Workflows</a></li>
+        <li><a href="#demo">Demo</a></li>
+      </ul>
+      <div class="nav-cta">
+        <button onclick="openModal()" class="btn btn-ghost">Contact</button>
+        <button onclick="openModal()" class="btn btn-primary">Request a Demo</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ──────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-grid">
+
+        <!-- Left: copy -->
+        <div>
+          
+          <h1 class="reveal reveal-delay-1">
+            From signal to action,<br/><span class="grad-text">in one workspace.</span>
+          </h1>
+          <p class="hero-desc reveal reveal-delay-2">
+            Syncaf brings procurement, inventory, fulfillment, finance, and an AI assistant together on one operational thread. Your processes stay yours — the platform connects them.
+          </p>
+          <div class="hero-actions reveal reveal-delay-3">
+            <a href="#demo" class="btn btn-gradient btn-lg">
+              <svg class="ico" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Watch the Demo
+            </a>
+            <a href="#modules" class="btn btn-ghost btn-lg">Explore Modules</a>
+          </div>
+          <div class="hero-stats reveal reveal-delay-4">
+            <div class="stat-item">
+              <div class="stat-num">12+</div>
+              <div class="stat-lbl">Core modules</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">AI</div>
+              <div class="stat-lbl">Native assistant</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">P2P + O2C</div>
+              <div class="stat-lbl">Full cycle coverage</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: UI preview -->
+        <div class="hero-visual reveal reveal-delay-2">
+          <div class="ui-preview-card">
+            <div class="ui-card-topbar">
+              <div class="ui-dot ui-dot-r"></div>
+              <div class="ui-dot ui-dot-y"></div>
+              <div class="ui-dot ui-dot-g"></div>
+              <div class="ui-topbar-title">Syncaf ERP — Dashboard</div>
+            </div>
+            <div class="ui-card-body">
+              <!-- KPI Strip -->
+              <div class="kpi-strip">
+                <div class="kpi-tile">
+                  <div class="kt-val">$284K</div>
+                  <div class="kt-lbl">Open POs</div>
+                  <div class="kt-change up">↑ 12%</div>
+                </div>
+                <div class="kpi-tile">
+                  <div class="kt-val">43</div>
+                  <div class="kt-lbl">Pending GRNs</div>
+                  <div class="kt-change down">↓ 5</div>
+                </div>
+                <div class="kpi-tile">
+                  <div class="kt-val">$92K</div>
+                  <div class="kt-lbl">AR Aging</div>
+                  <div class="kt-change up">↑ On track</div>
+                </div>
+                <div class="kpi-tile">
+                  <div class="kt-val">7</div>
+                  <div class="kt-lbl">Approvals</div>
+                  <div class="kt-change down">⚠ Due today</div>
+                </div>
+              </div>
+              <!-- Mini chart -->
+              <div class="mini-chart">
+                <div class="mini-chart-label">Procurement spend — last 7 days</div>
+                <div class="bars">
+                  <div class="bar" style="height:30%"></div>
+                  <div class="bar" style="height:55%"></div>
+                  <div class="bar" style="height:42%"></div>
+                  <div class="bar" style="height:70%"></div>
+                  <div class="bar" style="height:60%"></div>
+                  <div class="bar active" style="height:88%"></div>
+                  <div class="bar" style="height:75%"></div>
+                </div>
+              </div>
+              <!-- AI bubble -->
+              <div class="ai-bubble">
+                <div class="ai-bubble-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L9 9l-7 1 5 5-1 7 6-3.5L18 22l-1-7 5-5-7-1-3-7z"/></svg>
+                </div>
+                <div class="ai-bubble-text">
+                  <strong>AI:</strong> 3 invoices pending 3-way match — PO-2034, PO-2041, PO-2047. AP due this week: $38,400. Want me to draft payment entries?
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- floating label -->
+          <div class="hero-float-badge">
+            <div class="pulse-dot"></div>
+            Live operational data
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PLATFORM PILLARS ──────────────────────────────────────── -->
+  <section id="platform">
+    <div class="glow glow-2"></div>
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Platform</span>
+        <h2 class="section-heading">Everything connected.<br/>Nothing re-entered.</h2>
+        <p class="section-sub">A single operational record from the moment you raise a requisition to the moment the books close. No spreadsheet bridges, no manual reconciliation.</p>
+      </div>
+      <div class="pillars-grid">
+        <div class="pillar-card c-ai reveal reveal-delay-1">
+          <div class="pillar-icon pi-ai">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 2L9 9l-7 1 5 5-1 7 6-3.5L18 22l-1-7 5-5-7-1-3-7z"/></svg>
+          </div>
+          <div class="pillar-title">AI-First Design</div>
+          <div class="pillar-desc">The assistant is woven into the same operational thread—not bolted on top. Ask, validate, draft, and submit without switching context.</div>
+          <div class="pillar-features">
+            <div class="pf-item"><div class="pf-dot"></div>Live metric queries in plain language</div>
+            <div class="pf-item"><div class="pf-dot"></div>Guided document creation with validation</div>
+            <div class="pf-item"><div class="pf-dot"></div>Insight without building a report first</div>
+            <div class="pf-item"><div class="pf-dot"></div>Stays grounded in your item & account data</div>
+          </div>
+        </div>
+        <div class="pillar-card c-teal reveal reveal-delay-2">
+          <div class="pillar-icon pi-teal">
+            <svg class="ico" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <div class="pillar-title">Single Source of Truth</div>
+          <div class="pillar-desc">Master data, documents, and journal entries stay in sync. Finance sees what procurement created; logistics sees what sales committed.</div>
+          <div class="pillar-features">
+            <div class="pf-item"><div class="pf-dot"></div>Real-time inventory & financial sync</div>
+            <div class="pf-item"><div class="pf-dot"></div>Full audit trail on every document</div>
+            <div class="pf-item"><div class="pf-dot"></div>3-way match: PO → GRN → Invoice</div>
+            <div class="pf-item"><div class="pf-dot"></div>Multi-entity, multi-currency ready</div>
+          </div>
+        </div>
+        <div class="pillar-card c-violet reveal reveal-delay-3">
+          <div class="pillar-icon pi-violet">
+            <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <div class="pillar-title">Configurable Security</div>
+          <div class="pillar-desc">Role-based permissions follow responsibility. Approval workflows stay in the flow—not a separate portal. Governance built into every transaction.</div>
+          <div class="pillar-features">
+            <div class="pf-item"><div class="pf-dot"></div>Granular permission per doctype</div>
+            <div class="pf-item"><div class="pf-dot"></div>Approval inbox — bulk approve/reject</div>
+            <div class="pf-item"><div class="pf-dot"></div>Spend controls & budget enforcement</div>
+            <div class="pf-item"><div class="pf-dot"></div>ESG & compliance documentation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── AI SECTION ────────────────────────────────────────────── -->
+  <section id="ai">
+    <div class="glow glow-3"></div>
+    <div class="container">
+      <div class="reveal">
+        <span class="badge badge-ai">
+          <svg class="ico" style="width:11px;height:11px" viewBox="0 0 24 24"><path d="M12 2L9 9l-7 1 5 5-1 7 6-3.5L18 22l-1-7 5-5-7-1-3-7z"/></svg>
+          Core strength
+        </span>
+        <h2 class="section-heading" style="margin-top:0.75rem">Built for operations—<br/>not generic chat.</h2>
+        <p class="section-sub">The Syncaf AI Assistant reads your live data, understands your documents, and helps draft the next logical transaction — always grounded in validated item and account data.</p>
+      </div>
+      <div class="ai-layout">
+        <!-- Left: capabilities -->
+        <div>
+          <div class="ai-caps-grid reveal">
+            <div class="ai-cap-card">
+              <div class="ai-cap-icon">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-8"/></svg>
+              </div>
+              <div class="ai-cap-title">Operational Insight</div>
+              <div class="ai-cap-desc">KPIs, aging reports, stock projections, spend signals — on demand, without building a report first.</div>
+            </div>
+            <div class="ai-cap-card">
+              <div class="ai-cap-icon">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+              </div>
+              <div class="ai-cap-title">Guided Doc Creation</div>
+              <div class="ai-cap-desc">MRs, RFQs, POs, Sales Orders, GRNs, Invoices — only after required facts are collected and validated.</div>
+            </div>
+            <div class="ai-cap-card">
+              <div class="ai-cap-icon" style="background:#f0fdfa;color:#0f766e">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+              </div>
+              <div class="ai-cap-title">Validation First</div>
+              <div class="ai-cap-desc">Cross-checks against open documents and master data before suggesting any action — no "almost right" entries.</div>
+            </div>
+            <div class="ai-cap-card">
+              <div class="ai-cap-icon" style="background:#fff1f2;color:#be123c">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="ai-cap-title">In-Flow, Not a Tab</div>
+              <div class="ai-cap-desc">No raw field dumps. Answers feel like a colleague who knows the system — right where you're working.</div>
+            </div>
+          </div>
+          <!-- Capabilities list -->
+          <div style="margin-top:1.5rem; display:flex; flex-wrap:wrap; gap:0.45rem;" class="reveal reveal-delay-1">
+            <span class="badge badge-teal">Procurement analysis</span>
+            <span class="badge badge-ai">AP / AR insight</span>
+            <span class="badge badge-violet">Inventory projections</span>
+            <span class="badge badge-teal">Payment drafting</span>
+            <span class="badge badge-ai">Low-stock alerts</span>
+            <span class="badge badge-violet">Supplier performance</span>
+
+          </div>
+        </div>
+
+        <!-- Right: chat mock -->
+        <div class="chat-window reveal reveal-delay-2">
+          <div class="chat-topbar">
+            <div class="chat-avatar">AI</div>
+            <div class="chat-info">
+              <div class="ci-name">Syncaf AI Assistant</div>
+              <div class="ci-status">● Connected to your workspace</div>
+            </div>
+            <div class="chat-topbar-dots">
+              <div class="ui-dot ui-dot-r"></div>
+              <div class="ui-dot ui-dot-y"></div>
+              <div class="ui-dot ui-dot-g"></div>
+            </div>
+          </div>
+          <div class="chat-body">
+            <div class="chat-msg user">
+              "What's tying up payables this week — and can we raise a PO from the open requisition?"
+            </div>
+            <div class="chat-msg bot">
+              3 invoices overdue or due within 48 h — total $38,400. Oldest: INV-2031 (14 days, supplier: Apex Components).
+              <div class="mini-detail">
+                MR-0045 is open and approved. I've found a matching quote from your preferred supplier. Ready to draft PO-2048 and link it to the approval path?
+              </div>
+            </div>
+            <div class="chat-action-row">
+              <span class="chat-action-btn">✓ Draft PO-2048</span>
+              <span class="chat-action-btn">View MR-0045</span>
+              <span class="chat-action-btn">Show all payables</span>
+            </div>
+            <div class="chat-msg user" style="opacity:0.85">
+              "Show low-stock bins affecting next week's shipments."
+            </div>
+            <div class="chat-msg bot">
+              4 bins below reorder point for items on SO-0892 (ship date: Mon). Projected shortage: Item A-204, Bin W3-12. Suggest creating a Material Request now.
+            </div>
+          </div>
+          <div class="chat-input-bar">
+            <div class="chat-input-mock">Ask about your operations…</div>
+            <div class="chat-send">
+              <svg width="14" height="14" viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MODULES ───────────────────────────────────────────────── -->
+  <section id="modules">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Full application map</span>
+        <h2 class="section-heading">Every area covered,<br/>fully connected.</h2>
+        <p class="section-sub">12 core modules on a single platform — each one feeding data to the next, from the first requisition to the final payment.</p>
+      </div>
+      <div class="modules-grid">
+
+        <div class="mod-card reveal">
+          <div class="mod-icon mi-1">
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </div>
+          <div class="mod-name">Buy / Procurement</div>
+          <div class="mod-sub">Material requests, RFQ, supplier quotations, purchase orders, contracts</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-1">
+          <div class="mod-icon mi-2">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M16.5 9.4 7.55 4.24M21 16V8l-6-3-6 3v8l6 3 6-3z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/></svg>
+          </div>
+          <div class="mod-name">Receiving</div>
+          <div class="mod-sub">ASN, GRN, receipt QA, supplier returns</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-2">
+          <div class="mod-icon mi-3">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="mod-name">Suppliers</div>
+          <div class="mod-sub">Profiles, scorecards, performance KPIs, ESG compliance</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-3">
+          <div class="mod-icon mi-4">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          </div>
+          <div class="mod-name">Inventory & Items</div>
+          <div class="mod-sub">Catalog, BOM, bins, batch/serial, stock ledger, reorder rules</div>
+        </div>
+
+        <div class="mod-card reveal">
+          <div class="mod-icon mi-5">
+            <svg class="ico" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div class="mod-name">Logistics</div>
+          <div class="mod-sub">Pick lists, transfers, carriers, landed cost, customs documents</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-1">
+          <div class="mod-icon mi-6">
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </div>
+          <div class="mod-name">Sell / Order-to-Cash</div>
+          <div class="mod-sub">Quotes, sales orders, ATP, delivery notes, RMA</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-2">
+          <div class="mod-icon mi-7">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+          </div>
+          <div class="mod-name">Customers</div>
+          <div class="mod-sub">Account management, credit terms, AR aging, collections</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-3">
+          <div class="mod-icon mi-8">
+            <svg class="ico" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="mod-name">Finance</div>
+          <div class="mod-sub">GL, AP/AR, 3-way match, budgets, cash flow, treasury</div>
+        </div>
+
+        <div class="mod-card reveal">
+          <div class="mod-icon mi-9">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2"/></svg>
+          </div>
+          <div class="mod-name">Planning</div>
+          <div class="mod-sub">MRP, MPS, S&OP collaboration, demand forecasting</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-1">
+          <div class="mod-icon mi-10">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          </div>
+          <div class="mod-name">Analytics</div>
+          <div class="mod-sub">Procurement lens, inventory, fulfillment, spend & PPV views</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-2">
+          <div class="mod-icon mi-11">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="mod-name">Quality & Risk</div>
+          <div class="mod-sub">NCR, CAPA, SCAR, warranty claims, pre-ship assurance</div>
+        </div>
+
+        <div class="mod-card reveal reveal-delay-3">
+          <div class="mod-icon mi-12">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM9 9h6M9 15h6"/></svg>
+          </div>
+          <div class="mod-name">Governance & Audit</div>
+          <div class="mod-sub">Compliance, audit log, EDI, role settings, approval workflows</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WORKFLOWS ─────────────────────────────────────────────── -->
+  <section id="workflows">
+    <div class="glow glow-1" style="top:auto;bottom:-100px;right:-200px;opacity:0.5"></div>
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">End-to-end coverage</span>
+        <h2 class="section-heading">Complete business cycles,<br/>no broken handoffs.</h2>
+        <p class="section-sub">From the first requisition to supplier payment, and from the first quote to collected cash — every step traceable on a single operational thread.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="workflow-tabs reveal">
+        <button class="wf-tab active" onclick="switchTab('p2p', this)">Procure-to-Pay</button>
+        <button class="wf-tab" onclick="switchTab('o2c', this)">Order-to-Cash</button>
+        <button class="wf-tab" onclick="switchTab('quality', this)">Quality Cycle</button>
+      </div>
+
+      <!-- P2P -->
+      <div class="wf-panel active" id="wf-p2p">
+        <div class="flow-steps">
+          <div class="fs-item fc-teal">
+            <div class="fs-num">1</div>
+            <div class="fs-title">Need</div>
+            <div class="fs-tag">Requisition</div>
+          </div>
+          <div class="fs-item fc-teal">
+            <div class="fs-num">2</div>
+            <div class="fs-title">RFQ</div>
+            <div class="fs-tag">Quotes in</div>
+          </div>
+          <div class="fs-item fc-teal">
+            <div class="fs-num">3</div>
+            <div class="fs-title">Award</div>
+            <div class="fs-tag">Supplier quote</div>
+          </div>
+          <div class="fs-item fc-indigo">
+            <div class="fs-num">4</div>
+            <div class="fs-title">Purchase</div>
+            <div class="fs-tag">Commit + terms</div>
+          </div>
+          <div class="fs-item fc-indigo">
+            <div class="fs-num">5</div>
+            <div class="fs-title">Receive</div>
+            <div class="fs-tag">ASN / GRN</div>
+          </div>
+          <div class="fs-item fc-indigo">
+            <div class="fs-num">6</div>
+            <div class="fs-title">Quality</div>
+            <div class="fs-tag">Inspection</div>
+          </div>
+          <div class="fs-item fc-violet">
+            <div class="fs-num">7</div>
+            <div class="fs-title">Invoice</div>
+            <div class="fs-tag">Match & post</div>
+          </div>
+          <div class="fs-item fc-emerald">
+            <div class="fs-num">8</div>
+            <div class="fs-title">Settled</div>
+            <div class="fs-tag">Paid & closed</div>
+          </div>
+        </div>
+        <div class="flow-desc">
+          <svg class="ico" style="color:#0f766e;flex-shrink:0" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          Every step is linked: the PO references the requisition; the GRN references the PO; the invoice references the GRN. Full traceability from need to payment, with AI-assisted drafting at each stage.
+        </div>
+      </div>
+
+      <!-- O2C -->
+      <div class="wf-panel" id="wf-o2c">
+        <div class="flow-steps">
+          <div class="fs-item fc-violet">
+            <div class="fs-num">1</div>
+            <div class="fs-title">Quote</div>
+            <div class="fs-tag">Commercial</div>
+          </div>
+          <div class="fs-item fc-violet">
+            <div class="fs-num">2</div>
+            <div class="fs-title">Order</div>
+            <div class="fs-tag">Committed</div>
+          </div>
+          <div class="fs-item fc-violet">
+            <div class="fs-num">3</div>
+            <div class="fs-title">ATP</div>
+            <div class="fs-tag">Availability</div>
+          </div>
+          <div class="fs-item fc-indigo">
+            <div class="fs-num">4</div>
+            <div class="fs-title">Fulfill</div>
+            <div class="fs-tag">Pick / pack</div>
+          </div>
+          <div class="fs-item fc-indigo">
+            <div class="fs-num">5</div>
+            <div class="fs-title">Ship</div>
+            <div class="fs-tag">Proof of delivery</div>
+          </div>
+          <div class="fs-item fc-emerald">
+            <div class="fs-num">6</div>
+            <div class="fs-title">Invoice</div>
+            <div class="fs-tag">Revenue</div>
+          </div>
+          <div class="fs-item fc-teal">
+            <div class="fs-num">7</div>
+            <div class="fs-title">Cash</div>
+            <div class="fs-tag">Collected</div>
+          </div>
+        </div>
+        <div class="flow-desc">
+          <svg class="ico" style="color:#4338ca;flex-shrink:0" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+          Quote-to-invoice flows flex for projects, make-to-stock, or hybrid fulfillment. ATP check prevents over-commitment. The AI assistant surfaces low-stock risks before they delay shipments.
+        </div>
+      </div>
+
+      <!-- Quality -->
+      <div class="wf-panel" id="wf-quality">
+        <div class="flow-steps">
+          <div class="fs-item fc-rose">
+            <div class="fs-num">1</div>
+            <div class="fs-title">Flag</div>
+            <div class="fs-tag">NCR / SCAR</div>
+          </div>
+          <div class="fs-item fc-amber">
+            <div class="fs-num">2</div>
+            <div class="fs-title">Correct</div>
+            <div class="fs-tag">CAPA loop</div>
+          </div>
+          <div class="fs-item fc-teal">
+            <div class="fs-num">3</div>
+            <div class="fs-title">Assure</div>
+            <div class="fs-tag">Pre-ship / warranty</div>
+          </div>
+          <div class="fs-item fc-cyan">
+            <div class="fs-num">4</div>
+            <div class="fs-title">Evidence</div>
+            <div class="fs-tag">Audit & compliance</div>
+          </div>
+          <div class="fs-item fc-violet">
+            <div class="fs-num">5</div>
+            <div class="fs-title">Ecosystem</div>
+            <div class="fs-tag">Partner / EDI</div>
+          </div>
+        </div>
+        <div class="flow-desc">
+          <svg class="ico" style="color:#6d28d9;flex-shrink:0" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Non-conformance records, corrective actions, and warranty claims link back to the same items and documents you already track — no separate quality silo.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── FINANCE STRIP ─────────────────────────────────────────── -->
+  <section id="finance">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Finance & Control</span>
+        <h2 class="section-heading">Operational events become<br/>financial truth.</h2>
+        <p class="section-sub">Every receipt, shipment, and approval posts automatically. Period-end is consolidation, not data entry.</p>
+      </div>
+      <div class="fin-grid">
+        <div class="fin-card reveal">
+          <div class="fin-icon" style="background:#eef2ff;color:#4338ca">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-8"/></svg>
+          </div>
+          <div class="fin-title">Period Statements</div>
+          <div class="fin-desc">Trial balance, P&L, and balance sheet generated from live transaction data — no month-end re-import.</div>
+        </div>
+        <div class="fin-card reveal reveal-delay-1">
+          <div class="fin-icon" style="background:#f5f3ff;color:#6d28d9">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+          </div>
+          <div class="fin-title">Payables Discipline</div>
+          <div class="fin-desc">3-way match, AP aging dashboard, and payment scheduling — with AI-assisted due-date summaries.</div>
+        </div>
+        <div class="fin-card reveal reveal-delay-2">
+          <div class="fin-icon" style="background:#f0fdfa;color:#0f766e">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 010 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="fin-title">Receivables & FX</div>
+          <div class="fin-desc">AR aging, customer credit control, multi-currency with automatic FX revaluation.</div>
+        </div>
+        <div class="fin-card reveal reveal-delay-3">
+          <div class="fin-icon" style="background:#fffbeb;color:#92400e">
+            <svg class="ico" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          </div>
+          <div class="fin-title">Budgets & Entities</div>
+          <div class="fin-desc">Spend controls, intercompany transactions, cash flow projections, and LC/import documentation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DEMO STORY ────────────────────────────────────────────── -->
+  <section id="demo">
+    <div class="container">
+      <div class="reveal">
+        <span class="section-label">Live demo storyline</span>
+        <h2 class="section-heading">Seven minutes that show<br/>the whole shape.</h2>
+        <p class="section-sub">A focused demo arc that covers every key strength — reorder the beats to match your audience without losing the thread.</p>
+      </div>
+      <div class="story-steps">
+        <div class="story-step reveal">
+          <div class="ss-num">01</div>
+          <div class="ss-title">Pulse</div>
+          <div class="ss-desc">Dashboard + approval inbox. Show that leaders land on signal, not menus.</div>
+        </div>
+        <div class="story-step reveal reveal-delay-1">
+          <div class="ss-num">02</div>
+          <div class="ss-title">AI Core</div>
+          <div class="ss-desc">Live insight + guided document creation. This is the lead — show it early.</div>
+        </div>
+        <div class="story-step reveal reveal-delay-2">
+          <div class="ss-num">03</div>
+          <div class="ss-title">Buy</div>
+          <div class="ss-desc">One P2P thread: MR → RFQ → PO → GRN → Invoice → Payment.</div>
+        </div>
+        <div class="story-step reveal reveal-delay-3">
+          <div class="ss-num">04</div>
+          <div class="ss-title">Move</div>
+          <div class="ss-desc">Inventory & logistics proof: bins, stock transfer, pick list, landed cost.</div>
+        </div>
+        <div class="story-step reveal reveal-delay-4">
+          <div class="ss-num">05</div>
+          <div class="ss-title">Sell</div>
+          <div class="ss-desc">Order → ATP → ship → invoice → cash collected. Finance sees it immediately.</div>
+        </div>
+      </div>
+
+      <!-- Audience flex note -->
+      <div style="margin-top:2rem;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.75rem;display:flex;gap:1rem;align-items:flex-start;box-shadow:0 1px 3px rgba(15,23,42,0.06)" class="reveal">
+        <div style="width:38px;height:38px;border-radius:10px;background:#fffbeb;color:#92400e;display:grid;place-items:center;flex-shrink:0">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        </div>
+        <div>
+          <div style="font-size:0.9rem;font-weight:700;margin-bottom:0.3rem">Flex to your audience</div>
+          <div style="font-size:0.82rem;color:var(--text-2);line-height:1.55">CFO audience → lead with Finance + AI payables insight. Ops audience → lead with P2P + inventory. IT audience → lead with roles, audit trail, and configuration. Same Syncaf surface — your emphasis wins the room.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ───────────────────────────────────────────────────── -->
+  <section id="cta">
+    <div class="container">
+      <div class="cta-wrap reveal">
+        <span class="badge badge-ai" style="margin-bottom:1.25rem">Ready to explore</span>
+        <h2>Let's see it<br/><span class="grad-text">live together.</span></h2>
+        <p>Syncaf adapts to distribution, manufacturing, multi-site services, or public-sector logistics — the workflows above stay the scaffolding; your policies fill in the blanks.</p>
+        <div class="cta-actions">
+          <button onclick="openModal()" class="btn btn-gradient btn-lg">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Request a Demo
+          </button>
+          <a href="#modules" class="btn btn-ghost btn-lg">Explore All Modules</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <div class="nav-logo-mark" style="width:30px;height:30px">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2" stroke-linecap="round">
+              <path d="M15 5Q7 5 7 9Q7 13 15 13Q15 17 7 17"/>
+              <circle cx="15" cy="5" r="1.5" fill="white" stroke="none"/>
+              <circle cx="7" cy="17" r="1.5" fill="white" stroke="none"/>
+            </svg>
+          </div>
+          <span class="logo-name" style="font-size:0.88rem">Syncaf<span class="logo-tag">ERP</span></span>
+        </div>
+        <div class="footer-copy">AI-Powered Operations Platform · 2026</div>
+        <div class="footer-links">
+          <a href="#platform">Platform</a>
+          <a href="#ai">AI</a>
+          <a href="#modules">Modules</a>
+          <a href="#" onclick="openModal();return false;">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── MODAL ───────────────────────────────────────────────────── -->
+  <div id="modal-overlay" aria-hidden="true">
+    <div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <!-- Close -->
+      <button id="modal-close" onclick="closeModal()" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <!-- Header -->
+      <div id="modal-header">
+        <div id="modal-logo-mark">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2" stroke-linecap="round">
+            <path d="M15 5Q7 5 7 9Q7 13 15 13Q15 17 7 17"/>
+            <circle cx="15" cy="5" r="1.5" fill="white" stroke="none"/>
+            <circle cx="7" cy="17" r="1.5" fill="white" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <h3 id="modal-title">Request a Demo</h3>
+          <p id="modal-subtitle">We'll get back to you within 24 hours.</p>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="demo-form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+        <input type="hidden" name="access_key" value="1a7ef3e6-d9bd-4c7f-8eae-02101127f9de" />
+        <input type="hidden" name="subject" value="Syncaf ERP — Demo Request" />
+        <input type="hidden" name="from_name" value="Syncaf ERP Site" />
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" />
+
+        <div class="mf-row">
+          <div class="mf-group">
+            <label class="mf-label" for="mf-name">Full Name <span class="mf-req">*</span></label>
+            <input class="mf-input" id="mf-name" name="name" type="text" placeholder="John Smith" required />
+          </div>
+          <div class="mf-group">
+            <label class="mf-label" for="mf-email">Work Email <span class="mf-req">*</span></label>
+            <input class="mf-input" id="mf-email" name="email" type="email" placeholder="john@company.com" required />
+          </div>
+        </div>
+
+        <div class="mf-row">
+          <div class="mf-group">
+            <label class="mf-label" for="mf-company">Company</label>
+            <input class="mf-input" id="mf-company" name="company" type="text" placeholder="Acme Corp" />
+          </div>
+          <div class="mf-group">
+            <label class="mf-label" for="mf-size">Team Size</label>
+            <select class="mf-input mf-select" id="mf-size" name="team_size">
+              <option value="" disabled selected>Select…</option>
+              <option>1 – 10</option>
+              <option>11 – 50</option>
+              <option>51 – 200</option>
+              <option>200+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mf-group">
+          <label class="mf-label" for="mf-msg">What are you looking to solve? <span class="mf-req">*</span></label>
+          <textarea class="mf-input mf-textarea" id="mf-msg" name="message" rows="4" placeholder="Briefly describe your current challenge or what you'd like to see in the demo…" required></textarea>
+        </div>
+
+        <button type="submit" id="mf-submit" class="btn btn-gradient btn-lg" style="width:100%;justify-content:center;margin-top:0.25rem">
+          <span id="mf-btn-text">
+            <svg class="ico" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send Request
+          </span>
+          <span id="mf-btn-loading" style="display:none;align-items:center;gap:0.5rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Sending…
+          </span>
+        </button>
+      </form>
+
+      <!-- Success state -->
+      <div id="modal-success" style="display:none;text-align:center;padding:2rem 0 1rem">
+        <div id="modal-success-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" stroke="#059669" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+        </div>
+        <h4 style="font-size:1.1rem;font-weight:700;margin-top:0.85rem;color:var(--text)">Request received!</h4>
+        <p style="font-size:0.875rem;color:var(--text-2);margin-top:0.4rem;line-height:1.55">We'll reach out within 24 hours to schedule your demo.</p>
+        <button onclick="closeModal()" class="btn btn-ghost" style="margin-top:1.5rem">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ─── MODAL ────────────────────────────────────────────────────── */
+    #modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(15,23,42,0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    #modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #modal {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 560px;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 24px 64px rgba(15,23,42,0.18);
+      transform: translateY(16px) scale(0.98);
+      transition: transform 0.28s cubic-bezier(0.34,1.3,0.64,1), opacity 0.25s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    #modal-overlay.open #modal {
+      transform: translateY(0) scale(1);
+    }
+
+    #modal-close {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-2);
+      color: var(--text-3);
+      display: grid; place-items: center;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    #modal-close:hover { background: var(--border); color: var(--text); }
+
+    #modal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.75rem;
+    }
+
+    #modal-logo-mark {
+      width: 42px; height: 42px;
+      border-radius: 11px;
+      background: var(--grad-1);
+      display: grid; place-items: center;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.06em;
+      flex-shrink: 0;
+    }
+
+    #modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    #modal-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-3);
+      margin-top: 0.1rem;
+    }
+
+    .mf-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
+    }
+
+    @media (max-width: 480px) {
+      .mf-row { grid-template-columns: 1fr; }
+    }
+
+    .mf-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .mf-row .mf-group { margin-bottom: 0; }
+
+    .mf-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+
+    .mf-req { color: var(--rose); }
+
+    .mf-input {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: var(--text);
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 0.65rem 0.85rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .mf-input::placeholder { color: var(--text-3); }
+
+    .mf-input:focus {
+      border-color: #a5b4fc;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+      background: #ffffff;
+    }
+
+    .mf-input.mf-error {
+      border-color: #fca5a5;
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
+    }
+
+    .mf-select { cursor: pointer; }
+
+    .mf-textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.55;
+    }
+
+    #modal-success-icon {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      display: grid; place-items: center;
+      margin: 0 auto;
+    }
+  </style>
+
+  <!-- ─── SCRIPTS ───────────────────────────────────────────────── -->
+  <script>
+    // ── Modal ─────────────────────────────────────────────────────
+    var overlay = document.getElementById('modal-overlay');
+
+    function openModal() {
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function () { document.getElementById('mf-name').focus(); }, 50);
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    document.getElementById('demo-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form       = this;
+      var btnText    = document.getElementById('mf-btn-text');
+      var btnLoading = document.getElementById('mf-btn-loading');
+      var submitBtn  = document.getElementById('mf-submit');
+
+      form.querySelectorAll('.mf-input').forEach(function (el) { el.classList.remove('mf-error'); });
+
+      var valid = true;
+      ['mf-name', 'mf-email', 'mf-msg'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el.value.trim()) { el.classList.add('mf-error'); valid = false; }
+      });
+      if (!valid) return;
+
+      btnText.style.display    = 'none';
+      btnLoading.style.display = 'flex';
+      submitBtn.disabled       = true;
+
+      fetch(form.action, { method: 'POST', body: new FormData(form) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.success) {
+            form.style.display = 'none';
+            document.getElementById('modal-success').style.display = 'block';
+          } else { throw new Error(); }
+        })
+        .catch(function () {
+          btnText.style.display    = 'flex';
+          btnLoading.style.display = 'none';
+          submitBtn.disabled       = false;
+          alert('Something went wrong. Please try again.');
+        });
+    });
+
+    // ── Nav scroll effect ──────────────────────────────────────────
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function () {
+      nav.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Reveal on scroll
+    var reveals = document.querySelectorAll('.reveal');
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(function (el) { observer.observe(el); });
+
+    // Fire hero reveals immediately
+    document.querySelectorAll('#hero .reveal').forEach(function (el) {
+      el.classList.add('visible');
+    });
+
+    // Workflow tabs
+    function switchTab(id, btn) {
+      document.querySelectorAll('.wf-tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.wf-panel').forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('wf-' + id).classList.add('active');
+    }
+
+    // Animated bar chart — slight pulse every 3s
+    var bars = document.querySelectorAll('.bar');
+    setInterval(function () {
+      bars.forEach(function (b) {
+        var h = (Math.random() * 60 + 20) + '%';
+        b.style.height = h;
+      });
+    }, 2800);
+  </script>
+
+</body>
+</html>
