@@ -1900,14 +1900,19 @@
         <input type="hidden" name="from_name" value="Syncaf ERP Site" />
         <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" />
 
+        <div class="mf-group">
+          <label class="mf-label" for="mf-name">Full Name <span class="mf-req">*</span></label>
+          <input class="mf-input" id="mf-name" name="name" type="text" placeholder="John Smith" required />
+        </div>
+
         <div class="mf-row">
-          <div class="mf-group">
-            <label class="mf-label" for="mf-name">Full Name <span class="mf-req">*</span></label>
-            <input class="mf-input" id="mf-name" name="name" type="text" placeholder="John Smith" required />
-          </div>
           <div class="mf-group">
             <label class="mf-label" for="mf-email">Work Email <span class="mf-req">*</span></label>
             <input class="mf-input" id="mf-email" name="email" type="email" placeholder="john@company.com" required />
+          </div>
+          <div class="mf-group">
+            <label class="mf-label" for="mf-phone">Mobile Number <span class="mf-req">*</span></label>
+            <input class="mf-input" id="mf-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+880 1712-345678" required />
           </div>
         </div>
 
@@ -2155,7 +2160,7 @@
       form.querySelectorAll('.mf-input').forEach(function (el) { el.classList.remove('mf-error'); });
 
       var valid = true;
-      ['mf-name', 'mf-email', 'mf-msg'].forEach(function (id) {
+      ['mf-name', 'mf-email', 'mf-phone', 'mf-msg'].forEach(function (id) {
         var el = document.getElementById(id);
         if (!el.value.trim()) { el.classList.add('mf-error'); valid = false; }
       });
